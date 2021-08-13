@@ -1,0 +1,27 @@
+{
+  "name": "ws-audio-api",
+  "homepage": "https://github.com/Ivan-Feofanov/ws-audio-api",
+  "authors": [
+    "Ivan Feofanov <feofanov@gmail.com>",
+    "Artem Eltyshev <art.eltyshev@gmail.com>"
+  ],
+  "description": "Web Socket Audio API",
+  "main": "dist/ws-audio-api.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "websockets",
+    "web",
+    "audio",
+    "opus"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
