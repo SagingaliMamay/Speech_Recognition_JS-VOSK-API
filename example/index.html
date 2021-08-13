@@ -1,66 +1,65 @@
+<!DOCTYPE html>
 <html>
-    <head>
-    </head>
-    <body>
-        <button onclick="startContext()">Start context</button>
-        <button onclick="streamer.start()">Start stream</button>
-        <button onclick="streamer.stop()">Stop stream</button>
-        <br>
-    </body>
-    <script src="../src/libopus.js"></script>
-    <script src="../src/opus.js"></script>
-    <script src="../src/xaudio.js"></script>
-    <script src="../src/ws-audio-api.js"></script>
-    <script>
+<head>
+</head>
+<body>
+<button onclick="startContext();streamer.start()">Start</button>
+<button onclick="streamer.stop()">Stop</button>
+</body>
 
-        function startContext() {
-            const audioContext = new(window.AudioContext || window.webkitAudioContext)();
-            window.audioContext = audioContext;
+<script src="../src/libopus.js"></script>
+<script src="../src/opus.js"></script>
+<script src="../src/xaudio.js"></script>
+<script src="../src/ws-audio-api.js"></script>
+<script>
 
-                //Initialize WebKit Audio:
-                (function () {
-                    if (!launchedContext) {
-                        try {
-                            audioContextHandle = new AudioContext();                            //Create a system audio context.
-                        }
-                        catch (error) {
-                            try {
-                                audioContextHandle = new AudioContext();                                //Create a system audio context.
-                            }
-                            catch (error) {
-                                return;
-                            }
-                        }
-                        try {
-                            audioSource = audioContextHandle.createBufferSource();                      //We need to create a false input to get the chain started.
-                            audioSource.loop = false;   //Keep this alive forever (Event handler will know when to ouput.)
-                            XAudioJSSampleRate = webAudioActualSampleRate = audioContextHandle.sampleRate;
-                            audioSource.buffer = audioContextHandle.createBuffer(1, 1, webAudioActualSampleRate);   //Create a zero'd input buffer for the input to be valid.
-                            audioNode = audioContextHandle.createJavaScriptNode(samplesPerCallback, 1, 2);          //Create 2 outputs and ignore the input buffer (Just copy buffer 1 over if mono)
-                            audioNode.onaudioprocesPyth@n0017s = audioOutputEvent;                                //Connect the audio processing event to a handling function so we can manipulate output
-                            audioSource.connect(audioNode);                                             //Send and chain the input to the audio manipulation.
-                            audioNode.connect(audioContextHandle.destination);                          //Send and chain the output of the audio manipulation to the system audio output.
-                            audioSource.noteOn(0);                                                      //Start the loop!
-                        }
-                        catch (error) {
-                            return;
-                        }
-                        launchedContext = true;
+    function startContext() {
+        const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+        window.audioContext = audioContext;
+
+        //Initialize WebKit Audio:
+        (function() {
+            if (!launchedContext) {
+                try {
+                    audioContextHandle = new AudioContext(); //Create a system audio context.
+                } catch (error) {
+                    try {
+                        audioContextHandle = new AudioContext(); //Create a system audio context.
+                    } catch (error) {
+                        return;
                     }
-                })();
-    	const defaultConfig = {
-		    codec: {
-		        sampleRate: 24000,
-		        channels: 1,
-		        app: 2048,
-		        frameDuration: 20,
-		        bufferSize: 4096
-		    },
-		    server: {host:'ws://localhost:8080'}
-		}
+                }
+                try {
+                    audioSource = audioContextHandle.createBufferSource(); //We need to create a false input to get the chain started.
+                    audioSource.loop = false; //Keep this alive forever (Event handler will know when to ouput.)
+                    XAudioJSSampleRate = webAudioActualSampleRate = audioContextHandle.sampleRate;
+                    audioSource.buffer = audioContextHandle.createBuffer(1, 1, webAudioActualSampleRate); //Create a zero'd input buffer for the input to be valid.
+                    audioNode = audioContextHandle.createJavaScriptNode(samplesPerCallback, 1, 2); //Create 2 outputs and ignore the input buffer (Just copy buffer 1 over if mono)
+                    audioNode.onaudioprocess = audioOutputEvent; //Connect the audio processing event to a handling function so we can manipulate output
+                    audioSource.connect(audioNode); //Send and chain the input to the audio manipulation.
+                    audioNode.connect(audioContextHandle.destination); //Send and chain the output of the audio manipulation to the system audio output.
+                    audioSource.noteOn(0); //Start the loop!
+                } catch (error) {
+                    return;
+                }
+                launchedContext = true;
+            }
+        })();
 
+        let defaultConfig = {
+            codec: {
+                sampleRate: 24000,
+                channels: 1,
+                app: 2048,
+                frameDuration: 20,
+                bufferSize: 4096
+            },
+            server: {
+                host: 'ws://localhost:8080'
+            }
+        }
 
         window.streamer = new WSAudioAPI.Streamer(defaultConfig);
     }
-    </script>
+</script>
 </html>
