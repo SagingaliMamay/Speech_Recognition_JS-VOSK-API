@@ -33,7 +33,7 @@ wss.on('connection', function(ws, req) {
         let raw_data = encoder.decode(message);
 
         //7 : send raw audio data to VOSK API
-        if (vosk._rec_.acceptWaveform(decoded))
+        if (vosk._rec_.acceptWaveform(raw_data))
             console.log(vosk._rec_.result()); //8: output
     });
     console.log('Speaker connected');
