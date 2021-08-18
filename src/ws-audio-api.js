@@ -1,15 +1,6 @@
-//    WebSockets Audio API
-//
-//    Opus Quality Settings
-//    =====================
-//    App: 2048=voip, 2049=audio, 2051=low-delay
-//    Sample Rate: 8000, 12000, 16000, 24000, or 48000
-//    Frame Duration: 2.5, 5, 10, 20, 40, 60
-//    Buffer Size = sample rate/6000 * 1024
 
 (function(global) {
-	// var -> const
-	const defaultConfig = {
+	let defaultConfig = {
 		codec: {
 			sampleRate: 24000,
 			channels: 1,
@@ -22,11 +13,11 @@
 		}
 	};
 
-	
-	// var -> let
-	let WSAudioAPI = global.WSAudioAPI = {
 
+
+	let WSAudioAPI = global.WSAudioAPI = {
 		Streamer: function(config, socket) {
+			//1 : get microphone access
 			navigator.getUserMedia = (navigator.getUserMedia ||
 				navigator.webkitGetUserMedia ||
 				navigator.mozGetUserMedia ||
@@ -38,22 +29,25 @@
 			this.sampler = new Resampler(audioContext.sampleRate, this.config.codec.sampleRate, 1, this.config.codec.bufferSize);
 			this.parentSocket = socket;
 			this.encoder = new OpusEncoder(this.config.codec.sampleRate, this.config.codec.channels, this.config.codec.app, this.config.codec.frameDuration);
-			//var -> const
-			const _this = this;
+			let _this = this;
 
 			this._makeStream = function(onError) {
-				navigator.getUserMedia({ audio: true }, function(stream) {
+				navigator.getUserMedia({
+					audio: true
+				}, function(stream) {
 					_this.stream = stream;
 					_this.audioInput = audioContext.createMediaStreamSource(stream);
 					_this.gainNode = audioContext.createGain();
 					_this.recorder = audioContext.createScriptProcessor(_this.config.codec.bufferSize, 1, 1);
 
 					_this.recorder.onaudioprocess = function(e) {
-						// var -> let
+						//2 : e.InputBuffer == raw audio data
 						let resampled = _this.sampler.resampler(e.inputBuffer.getChannelData(0));
-						// var -> let
+
+						//3 : raw audio --> opus encoded data
 						let packets = _this.encoder.encode_float(resampled);
 						for (let i = 0; i < packets.length; i++) {
+							//4 : send data over socket
 							if (_this.socket.readyState == 1) _this.socket.send(packets[i]);
 						}
 					};
@@ -67,7 +61,6 @@
 	};
 
 	WSAudioAPI.Streamer.prototype.start = function(onError) {
-		//why let? -> let can be updated in its scope
 		let _this = this;
 		console.log(this.config)
 		if (!this.parentSocket) {
@@ -81,8 +74,7 @@
 		if (this.socket.readyState == WebSocket.OPEN) {
 			this._makeStream(onError);
 		} else if (this.socket.readyState == WebSocket.CONNECTING) {
-			// why const? -> const can't be updated,re-declared, visible only in its block scope
-			const _onopen = this.socket.onopen;
+			let _onopen = this.socket.onopen;
 
 			this.socket.onopen = function() {
 				if (_onopen) {
@@ -93,8 +85,19 @@
 		} else {
 			console.error('Socket is in CLOSED state');
 		}
-		// var -> const
-		const _onclose = this.socket.onclose;
+
+		let _onclose = this.socket.onclose;
+
+		//we receive the message from the server
+		this.socket.onmessage = function(message) {
+			console.log(message);
+
+			const output = document.querySelector('.output');
+
+			if(message){
+				output.innerHTML = message.data;
+			}
+		};
 
 		this.socket.onclose = function(event) {
 			if (_onclose) {
@@ -118,18 +121,7 @@
 		};
 	};
 
-	WSAudioAPI.Streamer.prototype.mute = function() {
-		this.gainNode.gain.value = 0;
-		console.log('Mic muted');
-	};
-
-	WSAudioAPI.Streamer.prototype.unMute = function() {
-		this.gainNode.gain.value = 1;
-		console.log('Mic unmuted');
-	};
-
 	WSAudioAPI.Streamer.prototype.onError = function(e) {
-		//why let? -> let can be updated in its scope
 		let error = new Error(e.name);
 		error.name = 'NavigatorUserMediaError';
 		throw error;
@@ -154,6 +146,4 @@
 			this.socket.close();
 		}
 	};
-
-
 })(window);
