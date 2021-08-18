@@ -39,23 +39,23 @@
 
 
 <script>
-    var message = document.querySelector('#message');
+    let message = document.querySelector('#message');
 
     var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
     var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
 
-    var grammar = '#JSGF V1.0;'
+    let grammar = '#JSGF V1.0;';
 
-    var recognition = new SpeechRecognition();
-    var speechRecognitionList = new SpeechGrammarList();
+    let recognition = new SpeechRecognition();
+    let speechRecognitionList = new SpeechGrammarList();
     speechRecognitionList.addFromString(grammar, 1);
     recognition.grammars = speechRecognitionList;
     recognition.lang = 'en-US';
     recognition.interimResults = false;
 
     recognition.onresult = function(event) {
-        var last = event.results.length - 1;
-        var command = event.results[last][0].transcript;
+        let last = event.results.length - 1;
+        let command = event.results[last][0].transcript;
         message.textContent = 'Voice Input: ' + command + '.';
 
         if(command.toLowerCase() === 'select english'){
@@ -92,14 +92,14 @@
     <option data-content='<span class="flag-icon flag-icon-mx"></span> French'>French</option>
 </select>
 <script>
-    $(function () {
+   /* $(function () {
         $('.selectpicker').selectpicker();
-    });
+    });*/
 </script>
 <script>
 
     function startContext() {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
         window.audioContext = audioContext;
 
         //Initialize WebKit Audio:
@@ -162,6 +162,5 @@
         stop.classList.add('hidden')
         start.classList.remove('hidden')
     })
-    b
 </script>
 </html>
