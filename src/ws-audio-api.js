@@ -1,3 +1,11 @@
+//    WebSockets Audio API
+//
+//    Opus Quality Settings
+//    =====================
+//    App: 2048=voip, 2049=audio, 2051=low-delay
+//    Sample Rate: 8000, 12000, 16000, 24000, or 48000
+//    Frame Duration: 2.5, 5, 10, 20, 40, 60
+//    Buffer Size = sample rate/6000 * 1024
 
 (function(global) {
 	let defaultConfig = {
@@ -31,6 +39,11 @@
 			this.encoder = new OpusEncoder(this.config.codec.sampleRate, this.config.codec.channels, this.config.codec.app, this.config.codec.frameDuration);
 			let _this = this;
 
+
+			global.changeLang = function() {
+				_this.socket.send('changeLang:' + document.getElementById('lang').value)
+			}
+
 			this._makeStream = function(onError) {
 				navigator.getUserMedia({
 					audio: true
@@ -59,6 +72,7 @@
 			}
 		}
 	};
+
 
 	WSAudioAPI.Streamer.prototype.start = function(onError) {
 		let _this = this;
@@ -90,13 +104,24 @@
 
 		//we receive the message from the server
 		this.socket.onmessage = function(message) {
-			console.log(message);
+			// console.log(message);
 
-			const output = document.querySelector('.output');
+			/*const output = document.querySelector('.output');
 
-			if(message){
-				output.innerHTML = message.data;
+            if (message) {
+                output.innerHTML = message.data;
+            }*/
+
+			// create the paragraph
+			let addMsg = document.createElement('p')
+
+			// display the message on the paragraph
+			if (message) {
+				addMsg.textContent = message.data
 			}
+
+			// ajoute l element dans la page HTML
+			document.querySelector('.output').prepend(addMsg)
 		};
 
 		this.socket.onclose = function(event) {

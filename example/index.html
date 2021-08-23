@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="display.css"/>
+    <link rel="stylesheet" href="display.css" />
 </head>
+
 <body>
 <button class='start' onclick="startContext();streamer.start()">Start</button>
 <button class='stop' onclick="streamer.stop()">Stop</button>
+
 <br>
 
-<div class='output'>
-
-</div>
-</body>
-<!--Select language-->
-
-<button id='btnGiveCommand'>Change Language</button>
-<br><br>
+<br>
 <span id='message'></span>
 <br><br>
 
-<input id='chkEnglish' type="checkbox" accept="./server/"> English
-<br>
-<input id='chkFrench' type="checkbox"> French
-<br>
-<input id='chkRussian' type="checkbox"> Russian
-<br>
-<input id='chkDutch' type="checkbox"> Dutch
+<select id="lang" onchange="window.changeLang()">
+    <option value="fr" selected>French</option>
+    <option value="en">English</option>
+</select>
 
-<!---->
+<div class='output'></div>
+</body>
 
 <script src="../src/libopus.js"></script>
 <script src="../src/opus.js"></script>
@@ -35,77 +28,14 @@
 <script src="../src/ws-audio-api.js"></script>
 <script src="./server/index.js"></script>
 
-<!--Select language-->
-
-
-<script>
-    let message = document.querySelector('#message');
-
-    var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
-    var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
-
-    let grammar = '#JSGF V1.0;';
-
-    let recognition = new SpeechRecognition();
-    let speechRecognitionList = new SpeechGrammarList();
-    speechRecognitionList.addFromString(grammar, 1);
-    recognition.grammars = speechRecognitionList;
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-
-    recognition.onresult = function(event) {
-        let last = event.results.length - 1;
-        let command = event.results[last][0].transcript;
-        message.textContent = 'Voice Input: ' + command + '.';
-
-        if(command.toLowerCase() === 'select english'){
-            document.querySelector('#chkEnglish').checked = true;
-        }
-        else if (command.toLowerCase() === 'select french'){
-            document.querySelector('#chkFrench').checked = true;
-        }
-        else if (command.toLowerCase() === 'select russian'){
-            document.querySelector('#chkRussian').checked = true;
-        }
-        else if (command.toLowerCase() === 'select dutch'){
-            document.querySelector('#chkDutch').checked = true;
-        }
-    };
-
-    recognition.onspeechend = function() {
-        recognition.stop();
-    };
-
-    recognition.onerror = function(event) {
-        message.textContent = 'Error occurred in recognition: ' + event.error;
-    }
-
-    document.querySelector('#btnGiveCommand').addEventListener('click', function(){
-        recognition.start();
-
-    });
-
-
-</script>
-<select class="selectpicker" data-width="fit">
-    <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-    <option data-content='<span class="flag-icon flag-icon-mx"></span> French'>French</option>
-    <option data-content='<span class="flag-icon flag-icon-mx"></span> French'>Russian</option>
-    <option data-content='<span class="flag-icon flag-icon-mx"></span> French'>Dutch</option>
-</select>
-<script>
-     $(function () {
-     $('.selectpicker').selectpicker();
-     });
-</script>
 <script>
 
     function startContext() {
-        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = new(window.AudioContext || window.webkitAudioContext)();
         window.audioContext = audioContext;
 
         //Initialize WebKit Audio:
-        (function () {
+        (function() {
             if (!launchedContext) {
                 try {
                     audioContextHandle = new AudioContext(); //Create a system audio context.
@@ -164,5 +94,6 @@
         stop.classList.add('hidden')
         start.classList.remove('hidden')
     })
+
 </script>
 </html>
