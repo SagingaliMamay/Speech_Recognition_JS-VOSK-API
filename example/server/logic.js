@@ -24,8 +24,8 @@ const recs = {
 }
 
 wss.on('connection', function(ws, req) {
-    let active_rec = recs.fr;//depending on your active language
-    ws.on('message', function(message) {
+    let active_rec = recs.en;//depending on your active language
+    ws.on('message', function (message) {
         //5 : message == opus encoded data
         if (typeof message === "object") {
             //6 : decode data --> raw audio data
@@ -34,31 +34,39 @@ wss.on('connection', function(ws, req) {
             //7 : send raw audio data to VOSK API
             if (active_rec.acceptWaveform(raw_data)) {
                 const txt = active_rec.result().text;
+                //  let lang =
                 ws.send(txt);//8: output
 
                 // change & test:
                 // todo : if changed by voice then update UI box
-                if (txt == "change English") {
+                if (txt == "changer") {
                     active_rec = recs.en;
-                }
-                else if (txt == "change French") {
+                    // document.getElementById("lang").value = "en";
+                } else if (txt == "french") {
                     active_rec = recs.fr;
+                    // document.getElementById("lang").value = "fr";
                 }
-            }
-        } else {
-            console.log(message)
-            if (message.includes('changeLang')) {
-                let idx = message.split(':')[1]
-                active_rec = recs[idx]
-                console.log('new active rec: ', idx)
-            }
+            } else {
+                console.log(message)hello
+
+
+                if (message.includes('changeLang')) {
+                    // split str into an array of substrings and return new array,(':') => SEPARATOR
+                    let idx = message.split(':')[1]
+                    active_rec = recs[idx]
+                    console.log('new active rec: ', idx)
+                }
+            }hello
+
+
         }
+        ;
+        console.log('Speaker connected');
     });
-    console.log('Speaker connected');
+
+    wss.on('close', function () {
+        console.log('Speaker disconnected');
+    });
+    console.log('Listening on port:', wsPort);
 });
 
-wss.on('close', function() {
-    console.log('Speaker disconnected');
-});
-
-console.log('Listening on port:', wsPort);

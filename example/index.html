@@ -9,7 +9,14 @@
 <button class='stop' onclick="streamer.stop()">Stop</button>
 
 <br>
+<br>
+<br>
+<div class="container">
+    <form action="https://www.google.com/search" method="GET" id="search-form">
+        <input type="text" name="q" placeholder="Search google..." autocomplete="off" autofocus>
 
+    </form>
+</div>
 <br>
 <span id='message'></span>
 <br><br>
@@ -26,7 +33,8 @@
 <script src="../src/opus.js"></script>
 <script src="../src/xaudio.js"></script>
 <script src="../src/ws-audio-api.js"></script>
-<script src="./server/index.js"></script>
+<script src="server/logic.js"></script>
+<script src="./server/search.js"></script>
 
 <script>
 
