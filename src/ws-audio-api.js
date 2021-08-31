@@ -42,15 +42,6 @@
 
 			global.changeLang = function() {
 				_this.socket.send('changeLang:' + document.getElementById('lang').value)
-				// let lang = document.getElementById('lang').value
-				// let lang_result;
-				// if(lang == "en"){
-				// 	lang_result = document.getElementById("lang").value = "en";
-				//
-				// }
-				if (txt === 'french'){
-					
-				}
 			}
 
 			this._makeStream = function(onError) {

@@ -41,13 +41,15 @@ wss.on('connection', function(ws, req) {
                 // todo : if changed by voice then update UI box
                 if (txt == "changer") {
                     active_rec = recs.en;
+                   // ws.send(txt);
                     // document.getElementById("lang").value = "en";
                 } else if (txt == "french") {
                     active_rec = recs.fr;
                     // document.getElementById("lang").value = "fr";
+                  //  ws.send(txt);
                 }
             } else {
-                console.log(message)hello
+                console.log(message)
 
 
                 if (message.includes('changeLang')) {
@@ -56,7 +58,7 @@ wss.on('connection', function(ws, req) {
                     active_rec = recs[idx]
                     console.log('new active rec: ', idx)
                 }
-            }hello
+            }
 
 
         }
