@@ -1,10 +1,11 @@
 ###VOSK API 
-
+https://media.discordapp.net/attachments/870246639565148190/875329685930795058/unknown.png?width=1440&height=581
 Library to broadcast the sound from the microphone through a WebSocket
 Here I am figuring out how :
 - WebSocket send data in two direction by same channel: Clent <--> Server
 - How get access to microphone in browser
 - How run this App in differents browsers
+- What happening with data
 - ![alt](https://media.discordapp.net/attachments/870246639565148190/875329685930795058/unknown.png?width=1440&height=581)
 
 Streamer mode:
